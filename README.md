@@ -1,70 +1,97 @@
-# Getting Started with Create React App
+# React + Redux Example
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<p align="center">
+  <img src="https://img.shields.io/badge/React-18+-blue?logo=react" alt="React">
+  <img src="https://img.shields.io/badge/Redux_Toolkit-2.x-purple?logo=redux" alt="Redux">
+  <img src="https://img.shields.io/badge/TypeScript-5.x-blue?logo=typescript" alt="TypeScript">
+  <img src="https://img.shields.io/badge/Vite-5.x-yellow?logo=vite" alt="Vite">
+  <img src="https://img.shields.io/badge/license-MIT-blue" alt="License">
+</p>
 
-## Available Scripts
+A clean **React + Redux Toolkit example** demonstrating modern state management patterns: slices, async thunks, selectors, and RTK Query. Built with TypeScript and Vite.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🏗️ State Flow
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```mermaid
+flowchart LR
+    UI["⚛️ React Components"] -->|dispatch action| Store["🏪 Redux Store"]
+    Store --> Slice["📦 Slice\n(reducer + actions)"]
+    Slice -->|new state| UI
+    
+    UI -->|useQuery / useMutation| RTKQ["🔌 RTK Query\n(cache + fetch)"]
+    RTKQ -->|HTTP| API["🌐 REST API"]
+    API --> RTKQ
+    RTKQ -->|auto-updates| Store
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🚀 Quick Start
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+npm install
+npm run dev
+```
 
-### `npm run build`
+Open `http://localhost:5173`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 📁 Structure
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+src/
+├── app/
+│   └── store.ts              # Redux store config
+├── features/
+│   ├── counter/
+│   │   ├── counterSlice.ts   # Slice with reducers + actions
+│   │   └── Counter.tsx       # Connected component
+│   └── posts/
+│       ├── postsSlice.ts     # Async thunk example
+│       └── PostsList.tsx
+└── services/
+    └── api.ts                # RTK Query API definition
+```
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🧩 Key Patterns
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Slice
+```ts
+const counterSlice = createSlice({
+  name: 'counter',
+  initialState: { value: 0 },
+  reducers: {
+    increment: (state) => { state.value += 1 },
+    decrement: (state) => { state.value -= 1 },
+  },
+});
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Async Thunk
+```ts
+export const fetchPosts = createAsyncThunk('posts/fetch', async () => {
+  const res = await fetch('/api/posts');
+  return res.json();
+});
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### RTK Query
+```ts
+const api = createApi({
+  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
+  endpoints: (build) => ({
+    getPosts: build.query<Post[], void>({ query: () => '/posts' }),
+  }),
+});
+```
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 📄 License
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+MIT
